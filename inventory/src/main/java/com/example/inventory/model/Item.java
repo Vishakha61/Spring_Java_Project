@@ -5,17 +5,19 @@ import lombok.*;
 
 @Entity
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class Item {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;   // use Long everywhere, not int
+    private Long id;
 
     private String name;
     private String category;
     private double price;
-    private int quantity;  // keep primitive int
+
+    // renamed to stock (your DB has 'stock' column)
+    private int quantity;
 }

@@ -40,7 +40,7 @@ public class ConsoleRunner implements CommandLineRunner {
 
             try {
                 switch (choice) {
-                    case 1:
+                    case 1 -> {
                         System.out.print("Enter item name: ");
                         String name = scanner.nextLine();
                         System.out.print("Enter category: ");
@@ -58,55 +58,65 @@ public class ConsoleRunner implements CommandLineRunner {
                                 .build();
 
                         inventoryService.addItem(item);
-                        System.out.println("Item added successfully.");
-                        break;
-
-                    case 2:
+                        System.out.println("✅ Item added successfully.");
+                    }
+                    case 2 -> {
                         List<Item> items = inventoryService.getAllItems();
-                        if (items.isEmpty()) {
+                        List<Item> availableItems = items.stream()
+                                .filter(i -> i.getQuantity() > 0)
+                                .toList();
+
+                        if (availableItems.isEmpty()) {
                             System.out.println("\n--- Inventory ---");
-                            System.out.println("No items available in inventory.\n");
+                            System.out.println("⚠️ No items available in inventory.\n");
                         } else {
                             System.out.println("\n--- Inventory ---");
-                            items.forEach(System.out::println);
+                            System.out.printf("%-5s %-15s %-15s %-10s %-10s%n",
+                                    "ID", "Name", "Category", "Price", "Stock");
+                            System.out.println("--------------------------------------------------------");
+                            for (Item i : availableItems) {
+                                System.out.printf("%-5d %-15s %-15s %-10.2f %-10d%n",
+                                        i.getId(), i.getName(), i.getCategory(),
+                                        i.getPrice(), i.getQuantity());
+                            }
                         }
-                        break;
-
-
-                    case 3:
+                    }
+                    case 3 -> {
                         System.out.print("Enter Item ID: ");
-                        Long itemId = scanner.nextLong();  // must be Long, not int
-
+                        Long itemId = scanner.nextLong();
                         System.out.print("Enter quantity: ");
                         int qty = scanner.nextInt();
-
                         Sales sale = billingService.generateBill(itemId, qty);
-                        System.out.println("Bill generated: " + sale);
-                        break;
-
-                    case 4:
+                        System.out.println("✅ Bill generated: " + sale);
+                    }
+                    case 4 -> {
                         List<Sales> salesList = billingService.getAllSales();
                         System.out.println("\n--- All Sales ---");
-                        salesList.forEach(System.out::println);
-                        break;
-
-                    case 5:
+                        if (salesList.isEmpty()) {
+                            System.out.println("⚠️ No sales recorded yet.\n");
+                        } else {
+                            salesList.forEach(System.out::println);
+                        }
+                    }
+                    case 5 -> {
                         Map<String, Double> report = billingService.getSalesReportByCategory();
                         System.out.println("\n--- Sales Report by Category ---");
-                        report.forEach((cat, total) -> 
-                                System.out.println(cat + " -> " + total));
-                        break;
-
-                    case 6:
-                        System.out.println("Exiting system. Goodbye!");
+                        if (report.isEmpty()) {
+                            System.out.println("⚠️ No sales available for reporting.\n");
+                        } else {
+                            report.forEach((cat, total) ->
+                                    System.out.println(cat + " -> " + total));
+                        }
+                    }
+                    case 6 -> {
+                        System.out.println("👋 Exiting system. Goodbye!");
                         scanner.close();
                         return;
-
-                    default:
-                        System.out.println("Invalid choice. Try again.");
+                    }
+                    default -> System.out.println("❌ Invalid choice. Try again.");
                 }
             } catch (Exception e) {
-                System.out.println("Error: " + e.getMessage());
+                System.out.println("⚠️ Error: " + e.getMessage());
             }
         }
     }

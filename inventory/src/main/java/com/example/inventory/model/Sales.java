@@ -3,25 +3,22 @@ package com.example.inventory.model;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class Sales {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "item_id", nullable = false)
-    private Item item;
-
-    private int quantity;
+    private String itemName;
+    private String category;
+    private int quantitySold;
     private double totalAmount;
-
-    private LocalDate saleDate;
+    private LocalDateTime saleDate;
 }

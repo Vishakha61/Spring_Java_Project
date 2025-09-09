@@ -19,8 +19,16 @@ public class InventoryService {
         return itemRepository.save(item);
     }
 
-    // ✅ Only fetch items with stock > 0
     public List<Item> getAllItems() {
-        return itemRepository.findByQuantityGreaterThan(0);
+        return itemRepository.findAll();
+    }
+
+    public Item getItemById(Long id) {
+        return itemRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Item not found"));
+    }
+
+    public void updateItem(Item item) {
+        itemRepository.save(item);
     }
 }

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
+@Table(name = "bill_items")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,10 +18,13 @@ public class BillItem {
     @JoinColumn(name = "item_id", nullable = false)
     private Item item;
 
+    @Column(nullable = false)
     private int quantity;
+    
+    @Column(nullable = false)
     private double price;
 
     @ManyToOne
     @JoinColumn(name = "bill_id")
-    private Bill bill;   // FIX: so we can call setBill()
+    private Bill bill;
 }

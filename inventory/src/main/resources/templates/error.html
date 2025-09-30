@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Error</title>
+    <style>
+        @keyframes slideUp {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .error-container {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .error-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            animation: slideUp 0.8s ease-out;
+            max-width: 600px;
+            width: 100%;
+        }
+        .error-icon {
+            font-size: 4rem;
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+        }
+        .error-title {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="error-container">
+            <div class="card error-card">
+                <div class="card-body text-center" style="padding: 3rem;">
+                    <i class="fas fa-exclamation-triangle error-icon mb-4"></i>
+                    <h1 class="error-title mb-3" th:text="${error}">Error</h1>
+                    <p class="lead mb-4" style="color: #6b7280;" th:text="${message}">Something went wrong</p>
+                    
+                    <div class="d-flex justify-content-center gap-3">
+                        <a href="javascript:history.back()" class="btn" 
+                           style="background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%); color: white; border: none; border-radius: 25px; padding: 12px 24px; font-weight: 600; transition: all 0.3s ease;">
+                            <i class="fas fa-arrow-left me-2"></i>Go Back
+                        </a>
+                        <a href="/" class="btn" 
+                           style="background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%); color: white; border: none; border-radius: 25px; padding: 12px 24px; font-weight: 600; transition: all 0.3s ease;">
+                            <i class="fas fa-home me-2"></i>Home
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

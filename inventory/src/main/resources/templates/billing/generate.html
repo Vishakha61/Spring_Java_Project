@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Generate Bill</title>
+    <style>
+        @keyframes slideUp {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+        .hover-lift:hover {
+            transform: translateY(-8px) scale(1.02) !important;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15) !important;
+        }
+        .form-focused {
+            transform: scale(1.02);
+        }
+    </style>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="container-fluid" style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); min-height: 100vh; padding: 20px;">
+            <div class="row mb-4" style="animation: slideUp 0.8s ease-out; opacity: 1; transform: translateY(0);">
+                <div class="col-12">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h2 style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; font-weight: bold; font-size: 2.5rem;">
+                            <i class="fas fa-receipt me-2" style="color: #10b981; -webkit-text-fill-color: #10b981; background: none;"></i>Generate Bill
+                        </h2>
+                        <a href="/billing" class="btn btn-outline-secondary hover-lift" style="border-radius: 25px; padding: 12px 24px; font-weight: 600; transition: all 0.3s ease; border-color: #6b7280; color: #6b7280;">
+                            <i class="fas fa-arrow-left me-1"></i>Back to Billing
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="card hover-lift" style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: none; border-radius: 15px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); animation: slideUp 0.8s ease-out 0.1s both;">
+                        <div class="card-header text-white" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 15px 15px 0 0; padding: 1.5rem;">
+                            <h5 class="mb-0" style="font-weight: 600;">
+                                <i class="fas fa-plus-circle me-2"></i>Create New Bill
+                            </h5>
+                        </div>
+                        <div class="card-body" style="background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%); padding: 2rem;">
+                        <form th:action="@{/billing/generate}" method="post">
+                            <div class="row">
+                                <div class="col-md-6 mb-3" style="animation: fadeIn 0.8s ease-out 0.2s both;">
+                                    <label for="itemId" class="form-label fw-bold" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent;">
+                                        <i class="fas fa-box me-1" style="color: #4f46e5; -webkit-text-fill-color: #4f46e5; background: none;"></i>Select Item *
+                                    </label>
+                                    <select class="form-select" id="itemId" name="itemId" required onchange="updateItemDetails()" 
+                                            style="border: 2px solid #e5e7eb; border-radius: 10px; background: rgba(255, 255, 255, 0.9); padding: 12px 16px; transition: all 0.3s ease; font-size: 1rem;"
+                                            onfocus="this.style.borderColor='#4f46e5'; this.style.boxShadow='0 0 0 3px rgba(79, 70, 229, 0.1)'"
+                                            onblur="this.style.borderColor='#e5e7eb'; this.style.boxShadow='none'"
+                                            onmouseover="this.style.borderColor='#6366f1'; this.style.transform='translateY(-1px)'"
+                                            onmouseout="this.style.borderColor='#e5e7eb'; this.style.transform='translateY(0)'"
+                                            >
+                                        <option value="">Choose an item...</option>
+                                        <option th:each="item : ${items}" 
+                                                th:if="${item.quantity > 0}"
+                                                th:value="${item.id}" 
+                                                th:text="${item.name + ' - ₹' + #numbers.formatDecimal(item.price, 1, 2) + ' (Stock: ' + item.quantity + ')'}"
+                                                th:data-price="${item.price}"
+                                                th:data-stock="${item.quantity}"
+                                                th:data-category="${item.category}">
+                                        </option>
+                                    </select>
+                                </div>
+                                
+                                <div class="col-md-6 mb-3" style="animation: fadeIn 0.8s ease-out 0.3s both;">
+                                    <label for="quantity" class="form-label fw-bold" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent;">
+                                        <i class="fas fa-sort-numeric-up me-1" style="color: #06b6d4; -webkit-text-fill-color: #06b6d4; background: none;"></i>Quantity *
+                                    </label>
+                                    <div class="input-group" style="border-radius: 10px; overflow: hidden;">
+                                        <input type="number" class="form-control" id="quantity" name="quantity" 
+                                               min="1" required placeholder="Enter quantity" onchange="calculateTotal()" 
+                                               style="border: 2px solid #e5e7eb; border-radius: 10px 0 0 10px; background: rgba(255, 255, 255, 0.9); padding: 12px 16px; transition: all 0.3s ease; font-size: 1rem;">
+                                        <span class="input-group-text text-white" style="background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); border: none; font-weight: 600; border-radius: 0 10px 10px 0;">units</span>
+                                    </div>
+                                    <div class="form-text text-muted" id="stockInfo" style="margin-top: 0.5rem; font-size: 0.9rem;"></div>
+                                </div>
+                            </div>
+                            
+            <!-- Item Details Display -->
+            <div class="row fade-in" id="itemDetails" style="display: none; animation-delay: 0.4s;">
+                <div class="col-12 mb-3">
+                    <div class="alert alert-modern bg-gradient" style="background: linear-gradient(135deg, rgba(13, 202, 240, 0.1) 0%, rgba(13, 110, 253, 0.1) 100%); border: 2px solid rgba(13, 202, 240, 0.3); border-radius: 15px;">
+                        <h6 class="mb-3 text-gradient"><i class="fas fa-info-circle me-2 text-info"></i>Item Details:</h6>
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <div class="detail-item">
+                                    <small class="text-muted d-block">Category</small>
+                                    <span class="fw-bold text-primary" id="itemCategory"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="detail-item">
+                                    <small class="text-muted d-block">Price</small>
+                                    <span class="fw-bold text-info">₹<span id="itemPrice"></span></span>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="detail-item">
+                                    <small class="text-muted d-block">Available Stock</small>
+                                    <span class="fw-bold text-warning" id="itemStock"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="detail-item">
+                                    <small class="text-muted d-block">Total Amount</small>
+                                    <span class="fw-bold text-success fs-5 rupee-price animate-pulse">₹<span id="totalAmount">0.00</span></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                            
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4 fade-in" style="animation-delay: 0.5s;">
+                                <button type="button" class="btn btn-outline-secondary me-md-2 hover-lift" onclick="window.location.href='/billing'">
+                                    <i class="fas fa-times me-1"></i>Cancel
+                                </button>
+                                <button type="submit" class="btn btn-success btn-modern pulse-on-hover" id="generateBtn" disabled>
+                                    <i class="fas fa-receipt me-1"></i>Generate Bill
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+        
+        <!-- Available Items for Quick Reference -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card" style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: none; border-radius: 15px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15); animation: slideUp 0.8s ease-out 0.4s both;">
+                    <div class="card-header text-white" style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); border-radius: 15px 15px 0 0; padding: 1.5rem;">
+                        <h6 class="mb-0" style="font-weight: 600;">
+                            <i class="fas fa-list me-2"></i>Available Items (Stock > 0)
+                        </h6>
+                    </div>
+                    <div class="card-body" style="padding: 2rem;">
+                        <div class="table-responsive">
+                            <table class="table table-hover" style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-radius: 10px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                                <thead style="background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%); color: white;">
+                                    <tr>
+                                        <th style="border: none; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; padding: 16px 12px;">ID</th>
+                                        <th style="border: none; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; padding: 16px 12px;">Name</th>
+                                        <th style="border: none; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; padding: 16px 12px;">Category</th>
+                                        <th style="border: none; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; padding: 16px 12px;">Price</th>
+                                        <th style="border: none; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; padding: 16px 12px;">Stock</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="item : ${items}" th:if="${item.quantity > 0}" 
+                                        style="transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer;" 
+                                        onmouseover="this.style.background='rgba(79, 70, 229, 0.05)'; this.style.transform='scale(1.01)'" 
+                                        onmouseout="this.style.background='transparent'; this.style.transform='scale(1)'"
+                                        onclick="document.getElementById('itemId').value=this.dataset.itemId; updateItemDetails();"
+                                        th:data-item-id="${item.id}">
+                                        <td th:text="${item.id}" style="padding: 12px; font-weight: 600; color: #4f46e5;"></td>
+                                        <td th:text="${item.name}" style="padding: 12px; font-weight: 500; color: #374151;"></td>
+                                        <td style="padding: 12px;">
+                                            <span class="badge" th:text="${item.category}" 
+                                                  style="background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%); padding: 8px 16px; border-radius: 20px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;"></span>
+                                        </td>
+                                        <td style="padding: 12px; font-weight: 700; color: #059669; font-family: 'Inter', monospace; font-size: 1.1rem;" th:text="'₹' + ${#numbers.formatDecimal(item.price, 1, 2)}"></td>
+                                        <td style="padding: 12px;">
+                                            <span class="badge" 
+                                                  th:classappend="${item.quantity > 10} ? 'bg-success' : 'bg-warning'"
+                                                  th:text="${item.quantity}" 
+                                                  style="padding: 8px 12px; border-radius: 15px; font-weight: 600;"></span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript for dynamic calculations -->
+    <script>
+        function updateItemDetails() {
+            const select = document.getElementById('itemId');
+            const selectedOption = select.options[select.selectedIndex];
+            const detailsDiv = document.getElementById('itemDetails');
+            const quantityInput = document.getElementById('quantity');
+            const generateBtn = document.getElementById('generateBtn');
+            
+            if (selectedOption.value) {
+                const price = selectedOption.dataset.price;
+                const stock = selectedOption.dataset.stock;
+                const category = selectedOption.dataset.category;
+                
+                // Add smooth animation when showing details
+                detailsDiv.style.display = 'block';
+                detailsDiv.classList.add('fade-in');
+                
+                document.getElementById('itemCategory').textContent = category;
+                document.getElementById('itemPrice').textContent = parseFloat(price).toFixed(2);
+                document.getElementById('itemStock').textContent = stock;
+                
+                quantityInput.max = stock;
+                quantityInput.classList.add('form-control-modern', 'hover-focus');
+                document.getElementById('stockInfo').innerHTML = `<i class="fas fa-info-circle text-info me-1"></i>Available: <strong>${stock}</strong> units`;
+                
+                quantityInput.disabled = false;
+                quantityInput.focus();
+                
+                calculateTotal();
+            } else {
+                detailsDiv.style.display = 'none';
+                detailsDiv.classList.remove('fade-in');
+                quantityInput.disabled = true;
+                quantityInput.value = '';
+                generateBtn.disabled = true;
+                document.getElementById('stockInfo').textContent = '';
+            }
+        }
+        
+        function calculateTotal() {
+            const select = document.getElementById('itemId');
+            const selectedOption = select.options[select.selectedIndex];
+            const quantity = document.getElementById('quantity').value;
+            const generateBtn = document.getElementById('generateBtn');
+            const totalElement = document.getElementById('totalAmount');
+            
+            if (selectedOption.value && quantity) {
+                const price = parseFloat(selectedOption.dataset.price);
+                const stock = parseInt(selectedOption.dataset.stock);
+                const total = price * parseInt(quantity);
+                
+                // Add animation to total amount
+                totalElement.classList.add('updated');
+                setTimeout(() => totalElement.classList.remove('updated'), 800);
+                
+                totalElement.textContent = total.toFixed(2);
+                
+                // Validate quantity against stock
+                if (parseInt(quantity) > stock) {
+                    document.getElementById('stockInfo').innerHTML = `<i class="fas fa-exclamation-triangle text-warning me-1"></i>Quantity exceeds available stock (<strong>${stock}</strong> units)`;
+                    generateBtn.disabled = true;
+                } else if (parseInt(quantity) === stock) {
+                    document.getElementById('stockInfo').innerHTML = `<i class="fas fa-check-circle text-success me-1"></i>Using all available stock (<strong>${stock}</strong> units)`;
+                    generateBtn.disabled = false;
+                } else {
+                    document.getElementById('stockInfo').innerHTML = `<i class="fas fa-info-circle text-info me-1"></i>Available: <strong>${stock}</strong> units`;
+                    generateBtn.disabled = false;
+                }
+            } else {
+                totalElement.textContent = '0.00';
+                generateBtn.disabled = true;
+            }
+        }
+        
+        // Add form submission animation
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const submitBtn = document.getElementById('generateBtn');
+            submitBtn.classList.add('btn-loading');
+            submitBtn.innerHTML = '<i class="fas fa-receipt me-1"></i>Generating Bill...';
+        });
+        
+        // Add hover effects to form controls
+        document.addEventListener('DOMContentLoaded', function() {
+            const formControls = document.querySelectorAll('.form-control, .form-select');
+            formControls.forEach(control => {
+                control.addEventListener('focus', function() {
+                    this.parentElement.classList.add('form-focused');
+                });
+                
+                control.addEventListener('blur', function() {
+                    this.parentElement.classList.remove('form-focused');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

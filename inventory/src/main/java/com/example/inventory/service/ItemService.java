@@ -18,8 +18,19 @@ public class ItemService {
 
     // Save new item
     public Item addItem(Item item) {
-    return itemRepository.save(item);
-}
+        return itemRepository.save(item);
+    }
+
+    // Save item (for updates too)
+    public Item saveItem(Item item) {
+        return itemRepository.save(item);
+    }
+
+    // Get item by ID
+    public Item getItemById(Long id) {
+        return itemRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Item not found with id: " + id));
+    }
 
 
     // Get all items

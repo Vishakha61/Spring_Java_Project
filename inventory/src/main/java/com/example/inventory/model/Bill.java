@@ -6,6 +6,7 @@ import lombok.*;
 import java.util.*;
 
 @Entity
+@Table(name = "bills")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -14,8 +15,10 @@ public class Bill {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int billId;
 
+    @Column(nullable = false)
     private double total;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "bill_id")
     private List<BillItem> items = new ArrayList<>();
 }

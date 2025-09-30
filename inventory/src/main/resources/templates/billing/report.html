@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Sales Report</title>
+    <style>
+        @keyframes slideUp {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .hover-lift:hover {
+            transform: translateY(-8px) scale(1.02) !important;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15) !important;
+        }
+    </style>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="container-fluid" style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); min-height: 100vh; padding: 20px;">
+            <div class="row mb-4" style="animation: slideUp 0.8s ease-out; opacity: 1; transform: translateY(0);">
+                <div class="col-12">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h2 style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; font-weight: bold; font-size: 2.5rem;">
+                            <i class="fas fa-chart-bar me-2" style="color: #f59e0b; -webkit-text-fill-color: #f59e0b; background: none;"></i>Sales Report
+                        </h2>
+                        <div class="btn-group">
+                            <a href="/billing/sales" class="btn btn-info me-2 hover-lift" style="background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); border: none; border-radius: 25px; padding: 12px 24px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; transition: all 0.3s ease;">
+                                <i class="fas fa-history me-1"></i>View Sales History
+                            </a>
+                            <a href="/billing" class="btn btn-outline-secondary hover-lift" style="border-radius: 25px; padding: 12px 24px; font-weight: 600; transition: all 0.3s ease;">
+                                <i class="fas fa-arrow-left me-1"></i>Back to Billing
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Total Revenue Summary -->
+            <div class="row mb-4">
+                <div class="col-md-6 mx-auto slide-up" style="animation-delay: 0.1s;">
+                    <div class="card shadow-lg border-0 dashboard-card hover-lift" style="background: linear-gradient(135deg, var(--warning) 0%, var(--warning-dark) 100%);">
+                        <div class="card-body text-center text-dark">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="card-title mb-0 opacity-90">Total Revenue (All Categories)</h6>
+                                    <h3 class="mb-0 fw-bold animate-pulse rupee-price" th:text="'₹' + ${#numbers.formatDecimal(totalRevenue, 1, 2)}">₹0.00</h3>
+                                </div>
+                                <i class="fas fa-rupee-sign fa-3x opacity-50"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sales Report by Category -->
+            <div class="row">
+                <div class="col-lg-8 slide-up" style="animation-delay: 0.2s;">
+                    <div class="card shadow-lg border-0 dashboard-card hover-lift">
+                        <div class="card-header text-dark" style="background: linear-gradient(135deg, var(--warning) 0%, var(--warning-dark) 100%);">
+                            <h5 class="mb-0 text-gradient">
+                            <i class="fas fa-chart-pie me-2"></i>Sales by Category
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div th:if="${reportData != null and !reportData.empty}">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Category</th>
+                                            <th>Total Sales</th>
+                                            <th>Percentage</th>
+                                            <th>Visual</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="entry : ${reportData}">
+                                            <td>
+                                                <span class="badge bg-secondary fs-6" th:text="${entry.key}"></span>
+                                            </td>
+                                            <td class="fw-bold text-success" th:text="'₹' + ${#numbers.formatDecimal(entry.value, 1, 2)}"></td>
+                                            <td th:text="${#numbers.formatDecimal(totalRevenue > 0 ? (entry.value / totalRevenue * 100) : 0, 1, 1)} + '%'"></td>
+                                            <td>
+                                                <div class="progress" style="height: 25px;">
+                                                    <div class="progress-bar bg-info" 
+                                                         role="progressbar" 
+                                                         th:style="'width: ' + ${totalRevenue > 0 ? (entry.value / totalRevenue * 100) : 0} + '%'"
+                                                         th:text="${#numbers.formatDecimal(totalRevenue > 0 ? (entry.value / totalRevenue * 100) : 0, 1, 1)} + '%'">
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div th:if="${reportData == null or reportData.empty}" class="text-center py-5">
+                            <i class="fas fa-chart-bar fa-4x text-muted mb-3"></i>
+                            <h5 class="text-muted">No sales data available</h5>
+                            <p class="text-muted">Generate some bills to see sales analytics.</p>
+                            <a href="/billing/generate" class="btn btn-warning">
+                                <i class="fas fa-plus me-1"></i>Generate First Bill
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-info text-white">
+                        <h6 class="mb-0">
+                            <i class="fas fa-info-circle me-2"></i>Report Summary
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div th:if="${reportData != null and !reportData.empty}">
+                            <div class="mb-3">
+                                <small class="text-muted">Categories with Sales:</small>
+                                <h4 th:text="${#maps.size(reportData)}" class="text-primary mb-0">0</h4>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <small class="text-muted">Top Performing Category:</small>
+                                <h6 class="text-success mb-0" 
+                                    th:if="${!reportData.empty}"
+                                    th:with="maxEntry=${reportData.entrySet().stream().max((e1, e2) -> e1.getValue().compareTo(e2.getValue())).orElse(null)}"
+                                    th:text="${maxEntry != null ? maxEntry.getKey() : 'N/A'}">N/A</h6>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <small class="text-muted">Total Revenue:</small>
+                                <h5 class="text-warning mb-0" th:text="'₹' + ${#numbers.formatDecimal(totalRevenue, 1, 2)}">₹0.00</h5>
+                            </div>
+                            
+                            <hr>
+                            
+                            <div class="d-grid gap-2">
+                                <a href="/billing/sales" class="btn btn-sm btn-outline-info">
+                                    <i class="fas fa-list me-1"></i>View Detailed Sales
+                                </a>
+                                <a href="/billing/generate" class="btn btn-sm btn-success">
+                                    <i class="fas fa-plus me-1"></i>Generate New Bill
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div th:if="${reportData == null or reportData.empty}" class="text-center">
+                            <i class="fas fa-chart-line fa-3x text-muted mb-3"></i>
+                            <p class="text-muted small">No data to analyze yet. Start generating bills to see detailed analytics here.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="card shadow-sm border-0 mt-3">
+                    <div class="card-header bg-light">
+                        <h6 class="mb-0">
+                            <i class="fas fa-rocket me-2"></i>Quick Actions
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-grid gap-2">
+                            <a href="/inventory" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-boxes me-1"></i>Manage Inventory
+                            </a>
+                            <a href="/billing/generate" class="btn btn-sm btn-success">
+                                <i class="fas fa-receipt me-1"></i>Generate Bill
+                            </a>
+                            <a href="/billing/sales" class="btn btn-sm btn-info">
+                                <i class="fas fa-history me-1"></i>Sales History
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

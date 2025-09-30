@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Billing Dashboard</title>
+    <style>
+        @keyframes slideUp {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .hover-lift:hover {
+            transform: translateY(-8px) scale(1.02) !important;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15) !important;
+        }
+        
+        .rupee-glow {
+            text-shadow: 0 0 10px rgba(5, 150, 105, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="container-fluid" style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); min-height: 100vh; padding: 20px;">
+            <div class="row mb-4 slide-up">
+                <div class="col-12">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h2 class="text-gradient animate-pulse" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; font-weight: bold; font-size: 2.5rem;">
+                            <i class="fas fa-cash-register me-2" style="color: #4f46e5; -webkit-text-fill-color: #4f46e5; background: none;"></i>Billing System
+                        </h2>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="row mb-4">
+                <div class="col-md-4 mb-3 slide-up" style="animation: slideUp 0.8s ease-out; opacity: 1; transform: translateY(0);">
+                    <div class="card h-100 dashboard-card hover-lift" style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: none; border-radius: 15px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);">
+                        <div class="card-body text-center" style="padding: 2rem;">
+                            <div class="mb-3">
+                                <i class="fas fa-receipt fa-3x" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent;"></i>
+                            </div>
+                            <h5 class="card-title" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; font-weight: 600;">Generate Bill</h5>
+                            <p class="card-text text-muted" style="color: #6b7280;">Create new bills for item sales</p>
+                            <a href="/billing/generate" class="btn btn-success" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border: none; border-radius: 25px; padding: 12px 24px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; transition: all 0.3s ease;">
+                                <i class="fas fa-plus me-1"></i>Generate Bill
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            
+            <div class="col-md-4 mb-3 slide-up" style="animation: slideUp 0.8s ease-out 0.1s both; opacity: 1; transform: translateY(0);">
+                <div class="card h-100 dashboard-card hover-lift" style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: none; border-radius: 15px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);">
+                    <div class="card-body text-center" style="padding: 2rem;">
+                        <div class="mb-3">
+                            <i class="fas fa-history fa-3x" style="background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent;"></i>
+                        </div>
+                        <h5 class="card-title" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; font-weight: 600;">Sales History</h5>
+                        <p class="card-text text-muted" style="color: #6b7280;">View all sales transactions</p>
+                        <a href="/billing/sales" class="btn btn-info" style="background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); border: none; border-radius: 25px; padding: 12px 24px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; transition: all 0.3s ease;">
+                            <i class="fas fa-list me-1"></i>View Sales
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-3 slide-up" style="animation: slideUp 0.8s ease-out 0.2s both; opacity: 1; transform: translateY(0);">
+                <div class="card h-100 dashboard-card hover-lift" style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: none; border-radius: 15px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);">
+                    <div class="card-body text-center" style="padding: 2rem;">
+                        <div class="mb-3">
+                            <i class="fas fa-chart-bar fa-3x" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent;"></i>
+                        </div>
+                        <h5 class="card-title" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; font-weight: 600;">Sales Report</h5>
+                        <p class="card-text text-muted" style="color: #6b7280;">View sales analytics by category</p>
+                        <a href="/billing/report" class="btn btn-warning" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); border: none; border-radius: 25px; padding: 12px 24px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; transition: all 0.3s ease;">
+                            <i class="fas fa-chart-line me-1"></i>View Report
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+            <!-- Available Items Summary -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card" style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: none; border-radius: 15px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15); animation: slideUp 0.8s ease-out 0.3s both;">
+                        <div class="card-header text-white" style="background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%); border-radius: 15px 15px 0 0; padding: 1.5rem;">
+                            <h5 class="mb-0" style="font-weight: 600;">
+                                <i class="fas fa-boxes me-2"></i>Available Items for Billing
+                            </h5>
+                        </div>
+                        <div class="card-body" style="padding: 2rem;">
+                            <div class="table-responsive" th:if="${items != null and !items.empty}">
+                                <table class="table table-hover" style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-radius: 10px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                                    <thead style="background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%); color: white;">
+                                        <tr>
+                                            <th style="border: none; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; padding: 16px 12px;">ID</th>
+                                            <th style="border: none; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; padding: 16px 12px;">Name</th>
+                                            <th style="border: none; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; padding: 16px 12px;">Category</th>
+                                            <th style="border: none; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; padding: 16px 12px;">Price</th>
+                                            <th style="border: none; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; padding: 16px 12px;">Stock</th>
+                                            <th style="border: none; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; padding: 16px 12px;">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="item : ${items}" style="transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer;" onmouseover="this.style.background='rgba(79, 70, 229, 0.05)'; this.style.transform='scale(1.01)'" onmouseout="this.style.background='transparent'; this.style.transform='scale(1)'">
+                                            <td th:text="${item.id}" style="padding: 12px; font-weight: 600; color: #4f46e5;"></td>
+                                            <td th:text="${item.name}" style="padding: 12px; font-weight: 500; color: #374151;"></td>
+                                            <td style="padding: 12px;">
+                                                <span class="badge" th:text="${item.category}" style="background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%); padding: 8px 16px; border-radius: 20px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;"></span>
+                                            </td>
+                                            <td style="padding: 12px; font-weight: 700; color: #059669; font-family: 'Inter', monospace; font-size: 1.1rem;" th:text="'₹' + ${#numbers.formatDecimal(item.price, 1, 2)}"></td>
+                                            <td style="padding: 12px;">
+                                                <span class="badge" 
+                                                      th:classappend="${item.quantity > 10} ? 'bg-success' : (${item.quantity > 0} ? 'bg-warning' : 'bg-danger')"
+                                                      th:text="${item.quantity}" style="padding: 8px 12px; border-radius: 15px; font-weight: 600;"></span>
+                                            </td>
+                                            <td style="padding: 12px;">
+                                                <span th:if="${item.quantity > 10}" class="badge" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 8px 16px; border-radius: 20px; font-weight: 600;">Available</span>
+                                                <span th:if="${item.quantity > 0 and item.quantity <= 10}" class="badge" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; padding: 8px 16px; border-radius: 20px; font-weight: 600;">Low Stock</span>
+                                                <span th:if="${item.quantity == 0}" class="badge" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; padding: 8px 16px; border-radius: 20px; font-weight: 600;">Out of Stock</span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                            </table>
+                        </div>
+                        
+                        <div th:if="${items == null or items.empty}" class="text-center py-5">
+                            <i class="fas fa-box-open fa-4x text-muted mb-3"></i>
+                            <h5 class="text-muted">No items available</h5>
+                            <p class="text-muted">Add some items to the inventory first.</p>
+                            <a href="/inventory/add" class="btn btn-primary">
+                                <i class="fas fa-plus me-1"></i>Add Items
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

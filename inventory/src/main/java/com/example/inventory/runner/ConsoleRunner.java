@@ -1,17 +1,16 @@
-package com.example.inventory;
+package com.example.inventory.runner;
 
 import com.example.inventory.model.Item;
 import com.example.inventory.model.Sales;
 import com.example.inventory.service.BillingService;
 import com.example.inventory.service.InventoryService;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
-@Component
+// @Component  // Commented out to disable console runner for web-only mode
 public class ConsoleRunner implements CommandLineRunner {
 
     private final InventoryService inventoryService;
